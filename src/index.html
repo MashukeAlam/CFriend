@@ -1,0 +1,114 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>CFriend</title>
+  </head>
+
+  <style>
+
+@font-face {
+  font-family: Monaco;
+  src: url('./fonts/monaco.ttf');
+}
+
+#ide {
+  font-family: Monaco;
+}
+#res_content {
+  font-family: Monaco;
+}
+    .env {
+      display: flex;
+      align-items: flex-start;
+      justify-content: start;
+      flex-direction: row;
+    }
+
+    #res {
+      border: 1px solid black;
+      margin: 5px;
+    }
+
+    .success {
+      color: green;
+      font-family: 'Times New Roman', Times, serif;
+    }
+
+    .error {
+      color: red;
+      font-family: 'Times New Roman', Times, serif;
+    }
+  </style>
+
+  <body>
+    <div>
+      <button id="crBtn" onclick="crProcess()">Compile & Run</button>
+    </div>
+    <div class="env">
+    <textarea class="flex-item" id="ide" name="" id="" cols="30" rows="10">
+
+    </textarea>
+    <div id="res" class="flex-item"><h3 id="res_content"></h3></div></div>
+    
+  <script src="https://requirejs.org/docs/release/2.3.5/minified/require.js"></script>
+  
+  <script src="./script.js"></script>
+
+  <script>
+    function send_data (channel, data) {
+      ipcRenderer.send(channel, data)
+    }
+
+    ipcRenderer.on(CHANNEL_NAMES[0], (e, args) => {
+      console.log(args);
+      
+    });
+
+
+    ipcRenderer.on(CHANNEL_NAMES[1], (e, args) => {
+      console.log(args);
+      document.getElementById("res_content").innerHTML = "";
+      let res_header = args[0];
+      if(res_header == "Success"){
+     document.getElementById("res_content").innerHTML += "<span class='success'>Successfully Compiled 😎</span></br>";
+     document.getElementById("res_content").innerHTML += args[1];
+      }else{
+        document.getElementById("res_content").innerHTML += "<span class='error'>Oops Error 😭</span></br>";
+     document.getElementById("res_content").innerHTML += args[1];
+
+      }
+      
+    });
+    // function downloadLocation () {
+    //    send_data('spawn_window')
+    //   // console.log(111)
+    // }
+    // // console.log(4545454545454545);
+    
+    // ipcRenderer.on('test', (e, a) => {
+    //   // console.log(a);
+      
+    // });
+  </script>
+
+  <script>
+    const WIN_HEIGHT = window.innerHeight;
+    const WIN_WIDTH = window.innerWidth;
+    
+    _ide.style.height = WIN_HEIGHT - 20;
+    _ide.style.width = WIN_WIDTH * .6;
+    _res.style.height = WIN_HEIGHT - 20;
+    _res.style.width = WIN_WIDTH * .38;
+  </script>
+
+  <script>
+    crProcess = () => {
+      // console.log('hello');
+      
+      let code = _ide.value;
+      send_data(CHANNEL_NAMES[0], code);
+    }
+  </script>
+</html>
